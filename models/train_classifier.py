@@ -54,7 +54,7 @@ def load_data(database_filepath):
     df=df.drop(columns=['original'], axis=1)
     X = df[['message']]
     Y = df.drop(columns=['id','message','genre'],axis=1)
-    category_names =['class_0','class_1','class_2']
+    category_names =Y.columns
     
     return X, Y, category_names 
 
@@ -120,7 +120,8 @@ def evaluate_model(model, X_test, Y_test, category_names):
     X_test=np.reshape(X_test,(-1,2))
     X_test=X_test.flatten()
     y_pred = model.predict(X_test)
-    print(classification_report(m.transform(Y_test),m.transform(y_pred),target_names=category_names))
+#    print(classification_report(m.transform(Y_test),m.transform(y_pred),target_names=category_names))
+    print(classification_report(Y_test,y_pred,target_names=category_names))
 
 
 def save_model(model, model_filepath):

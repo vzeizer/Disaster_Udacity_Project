@@ -39,6 +39,13 @@ def clean_data(df,categories):
     
     # convert column from string to numeric
         categories[column] = categories[column].astype(int)
+    
+    for i in range(len(categories['related'])):
+        if(categories['related'][i]==2):
+            categories['related'][i]=0
+        else:
+            pass
+
 
     df.drop(['categories'],axis=1,inplace=True)
 
