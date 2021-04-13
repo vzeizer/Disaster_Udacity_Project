@@ -8,6 +8,8 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
+from plotly.graph_objs import Pie
+
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -43,6 +45,27 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # for medical help
+    colss=df.columns
+    col_med=[]
+    for col in colss:
+        if('medical' in col):
+            col_med.append(col)
+    
+    med_cols=df[col_med].sum().sort_values(ascending=False)
+    med_names=list(med_cols.index)
+    
+    # for aid disaster
+    
+    colss=df.columns
+    col_aid=[]
+    for col in colss:
+        if('aid' in col):
+            col_aid.append(col)
+            
+    aid_cols=df[col_aid].sum().sort_values(ascending=False)
+    aid_names=list(aid_cols.index)
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -63,7 +86,44 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        
+        
+        {
+            'data': [
+                Pie(labels=med_names, values=med_cols
+                )
+            ],
+
+            'layout': {
+                'title': 'Disaster Medical Help',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Medical help"
+                }
+            }
+        },
+        
+        
+        {
+            'data': [
+                Pie(labels=aid_names, values=aid_cols
+                )
+            ],
+
+            'layout': {
+                'title': 'Disaster Aid Help',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Aid help"
+                }
+            }
         }
+
     ]
     
     # encode plotly graphs in JSON
@@ -72,6 +132,14 @@ def index():
     
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
+
+
+
+
+
+
+
+
 
 
 # web page that handles user query and displays model results
